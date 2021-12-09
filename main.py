@@ -21,14 +21,14 @@ RL = RL()
 #Define Variables
 #FLAGS
 cnn_train = False
-snn_train = True
+snn_train = False
 rl_train = False
 preprocess_snnDS = False
 Test_CNN = False
 Test_SNN = False
 feed_CNN = False
-run_loop = False
-constant_V = False
+run_loop = True
+
 
 
 #Parameters
@@ -75,7 +75,7 @@ else:
 if snn_train:
 	if os.path.isfile(snn_weights):
 		os.remove(snn_weights)
-	SNN.trainModel(csv_snnDS_path,snn_model,epochs=100,batch=4)
+	SNN.trainModel(csv_snnDS_path,snn_model,epochs=100,batch=6)
 	Helpers.saveWeights(snn_model,snn_weights)
 else:
 	print('Loading SNN model...')

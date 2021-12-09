@@ -12,7 +12,7 @@ class RL():
 	def __init__(self):
 		pass
 
-	def get_Q_table(self,env,memory,k,a_size=4,episodes=1000):
+	def get_Q_table(self,env,memory,k,a_size=4,episodes=10000):
 		'''
 		Learns the q table 
 		'''
@@ -20,7 +20,7 @@ class RL():
 		h = Helpers()
 
 		s_size = k**memory
-		out_file = './RL/'+str(s_size)+'X'+str(a_size)+'Q_table'+str(memory)+'M.npy'
+		out_file = './RL/Qtables/'+str(s_size)+'X'+str(a_size)+'Q_table'+str(memory)+'M.npy'
 		q_table = np.random.rand(s_size,a_size)
 
 		# Hyperparameters
@@ -37,10 +37,10 @@ class RL():
 			epochs, penalties, reward, = 0, 0, 0
 			done = False
 
-			while not done:
-
-				if v_state[-1] == goal:
+			if v_state[-1] == goal:
 					done = True
+
+			while not done:
 
 				if np.random.uniform(0, 1) < epsilon:
 					action =  np.random.choice([1,2,3,4])# Explore action space
@@ -66,6 +66,9 @@ class RL():
 				v_state.pop(0)
 				state = h.stateEncoder(k,v_state)
 				epochs += 1
+
+				if v_state[-1] == goal:
+					done = True
 
 			if i % 100 == 0:
 				clear_output(wait=True)
