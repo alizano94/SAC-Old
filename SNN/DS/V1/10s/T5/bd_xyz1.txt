@@ -1,13 +1,3 @@
-   1000000.0000000000     
-   10000.000000000000     
-         300
-   2870.0000000000000     
-           5
- SD simulations for polymer-coated particles near
- a hard interface with complete hydrodynamics
- area fraction (based on core radius) =   1.0000000000000000E-003
- Temperature (C) =   20.000000000000000     
-  
       1     -11.82281     -18.65535       1.06630
       2     -20.06486      -2.50546       1.06630
       3     -17.46664       1.37534       1.06630

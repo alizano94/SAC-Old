@@ -26,8 +26,7 @@ rl_train = False
 preprocess_snnDS = False
 Test_CNN = False
 Test_SNN = False
-feed_CNN = False
-run_loop = True
+Test_RL = False
 
 
 
@@ -101,3 +100,60 @@ if Test_CNN:
 if Test_SNN:
 	Helpers.DataTrasnProbPlot(window,memory,k)
 	SNN.testSNN(snn_model,window,memory,k)
+
+if Test_RL:
+	#Add RL heat map method
+	pass
+
+
+bars = ['Fluid','Defective','Crystal']
+Voltages = ['','V1','V2','V3','V4','']
+y_pos = np.arange(len(bars))
+y2_pos = np.arange(len(Voltages))
+fig_path = './'
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+ax2 = ax1.twinx()
+ax2.set_yticks(y2_pos)
+ax2.set_yticklabels(Voltages)
+ax2.set_ylim([0.0,5.0])
+#ax2.set_ylabel("Voltage Level")
+ax1.set_yticks(y_pos)
+ax1.set_yticklabels(bars)
+ax1.set_xlabel("Time Step")
+
+img_path = './InitialStates/Fluid_test.png'
+img_batch = Helpers.preProcessImg(img_path)
+state, _ = CNN.runCNN(cnn_model,img_batch)
+v_state = [state]*memory
+
+trajectory = [state]
+policy = []
+
+while state != 2:
+	index = Helpers.stateEncoder(k,v_state)
+	action = RL.QControl(q_table,index)
+	inp_feat = {'V':np.array([float(action)])}
+	for j in range(memory):
+		name = 'S'+str(j-memory)
+		state_j = v_state[j]
+		inp_feat[name] = np.array([float(state_j)])
+
+	state = int(SNN.runSNN2(snn_model,inp_feat))
+	v_state += [state]
+	v_state.pop(0)
+	trajectory.append(state)
+	policy.append(action)
+
+print(trajectory)
+policy += [policy[-1]]
+print(policy)
+
+length = len(trajectory)
+x = range(length)
+ax1.plot(x, trajectory,'--o', label='State')
+ax2.plot(x,policy,'--',color='red',label= 'Volatge level' )
+ax1.legend()
+ax2.legend()
+plt.savefig(fig_path+'out.png')
+plt.clf()
