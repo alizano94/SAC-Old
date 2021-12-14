@@ -22,7 +22,7 @@ RL = RL()
 #FLAGS
 cnn_train = False
 snn_train = False
-rl_train = False
+rl_train = True
 preprocess_snnDS = False
 Test_CNN = False
 Test_SNN = False
