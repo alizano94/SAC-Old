@@ -12,7 +12,7 @@ class RL():
 	def __init__(self):
 		pass
 
-	def get_Q_table(self,env,memory,k,a_size=4,episodes=10000):
+	def get_Q_table(self,env,memory,k,a_size=4,episodes=50000):
 		'''
 		Learns the q table 
 		'''
