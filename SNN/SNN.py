@@ -16,6 +16,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 class SNN():
 	def __init__(self):
+		self.helpers = Helpers()
+		self.cnn = CNN()
 		pass
 
 	def createDS(self,path,window,memory):
@@ -26,42 +28,41 @@ class SNN():
 			-path: path to SNN DS dir
 			-model: CNN model to predict
 		'''
-		h = Helpers()
 
 		data = pd.DataFrame()
 
 		sep = '","'
 		ds_name = path+'/'+'Balanced-W'+str(window)+'-M'+str(memory)+'.csv'
 		for v_dir in os.listdir(path):
-			v_path = path+'/'+str(v_dir)
+			v_path = os.path.join(path,v_dir)
 			if os.path.isdir(v_path):
 				V = v_dir.replace('V','')
 				for sampling_dir in os.listdir(v_path):
-					sts_path = v_path+'/'+str(sampling_dir)
+					sts_path = os.path.join(v_path,sampling_dir)
 					if os.path.isdir(sts_path):
 						sts_step = sampling_dir.replace('s','')
 						for traj_dir in os.listdir(sts_path):
-							traj_path = sts_path+'/'+str(traj_dir)
+							traj_path = os.path.join(sts_path,traj_dir)
 							T = traj_dir.replace('T','')
 							if os.path.isdir(traj_path):
 								csv_name = 'V'+str(V)+'-'+str(sts_step)+'s-T'+str(T)+'.csv'
-								csv_path = traj_path+'/'+csv_name
+								csv_path = os.path.join(traj_path,csv_name)
 								if os.path.exists(csv_path):
 									if V != 'R':
 										csv_df = pd.read_csv(csv_path)
-										csv_df = h.windowResampling(csv_df,
+										csv_df = self.helpers.windowResampling(csv_df,
 											int(sts_step),window,memory)
 										data = data.append(csv_df)
 									elif V == 'R' and int(sts_step) == window:
 										csv_df = pd.read_csv(csv_path)
-										csv_df = h.windowResampling(csv_df,
+										csv_df = self.helpers.windowResampling(csv_df,
 											int(sts_step),int(sts_step),memory)
 										data = data.append(csv_df)
 									else:
 										pass
 
 		data.reset_index(inplace=True)						
-		data = h.DropBiasData(data)
+		data = self.helpers.DropBiasData(data)
 		#data.drop(columns=['level_0'],inplace=True)
 		print('Saving DS of size: '+str(len(data)))
 		print(ds_name)
@@ -70,8 +71,8 @@ class SNN():
 
 
 	def prior(self,kernel_size, bias_size, dtype=None):
-	    n = kernel_size + bias_size
-	    prior_model = keras.Sequential(
+		n = kernel_size + bias_size
+		prior_model = keras.Sequential(
 	        [
 	            tfp.layers.DistributionLambda(
 	                lambda t: tfp.distributions.MultivariateNormalDiag(
@@ -80,12 +81,12 @@ class SNN():
 	            )
 	        ]
 	    )
-	    return prior_model
+		return prior_model
 
 
 	def posterior(self,kernel_size, bias_size, dtype=None):
-	    n = kernel_size + bias_size
-	    posterior_model = keras.Sequential(
+		n = kernel_size + bias_size
+		posterior_model = keras.Sequential(
 	        [
 	            tfp.layers.VariableLayer(
 	                tfp.layers.MultivariateNormalTriL.params_size(n), dtype=dtype
@@ -93,7 +94,7 @@ class SNN():
 	            tfp.layers.MultivariateNormalTriL(n),
 	        ]
 	    )
-	    return posterior_model
+		return posterior_model
 
 
 

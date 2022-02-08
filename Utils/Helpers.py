@@ -15,7 +15,7 @@ class Helpers():
 	Helper functions for the loop
 	'''
 	def __init__(self):
-		pass
+		self.cnn = CNN()
 		
 	
 	def convertToMatrix(self,data,step):
@@ -81,25 +81,20 @@ class Helpers():
 		real state, cnnn state and voltage.
 		'''
 
-		img_cls = CNN()
-
 		sep = '","'
 		for v_dir in os.listdir(path):
-			v_path = path+'/'+str(v_dir)
+			v_path = os.path.join(path,v_dir)
 			if os.path.isdir(v_path):
-				V = v_dir.replace('V','')
-				for sampling_dir in os.listdir(v_path):
-					sts_path = v_path+'/'+str(sampling_dir)
-					if os.path.isdir(sts_path):
-						sts_step = sampling_dir.replace('s','')
-						for traj_dir in os.listdir(sts_path):
-							traj_path = sts_path+'/'+str(traj_dir)
-							T = traj_dir.replace('T','')
-							if os.path.isdir(traj_path):
-								op_path = traj_path+'/op1.txt'
+				for step_dir in os.listdir(v_path):
+					step_path = os.path.join(v_path,step_dir)
+					if os.path.isdir(step_path):
+						for t_dir in os.listdir(step_path):
+							t_path = os.path.join(step_path,t_dir)
+							if os.path.isdir(t_path):
+								op_path = os.path.join(t_path,'op1.txt')
 								if os.path.exists(op_path):
-									os.chdir(traj_path)
-									csv_name = 'V'+str(V)+'-'+str(sts_step)+'s-T'+str(T)+'.csv'
+									os.chdir(t_path)
+									csv_name = v_dir+'-'+step_dir+'-'+t_dir+'.csv'
 									os.system("awk '{print $1,"
 										+sep+",$2,"
 										+sep+",$3,"
@@ -112,14 +107,14 @@ class Helpers():
 									data = data.drop(labels=['RC','lambda','rgmean'],axis=1)
 									states = pd.DataFrame(columns = ['S_cnn', 'S_param'])
 									for i in range(0,len(data.index)):
-										file_name = traj_path+'/plots/V'+str(V)+'-T'+str(T)+'-'+str(i)+'step-'+str(sts_step)+'s.png'
+										file_name = t_path+'/plots/'+v_dir+'-'+t_dir+'-'+str(i)+'step'+step_dir+'.png'
 										img_batch = self.preProcessImg(file_name)
-										s_cnn, _ = img_cls.runCNN(model,img_batch)
+										s_cnn, _ = self.cnn.runCNN(model,img_batch)
 										c6 = data.iloc[i]['C6_avg']
 										psi6 = data.iloc[i]['psi6']
 										if c6 <= 4.0:
 											s_real = 0
-										elif c6 > 4.0 and psi6 < 0.98:
+										elif c6 > 4.0 and psi6 < 0.99:
 											s_real = 1
 										else:
 											s_real = 2

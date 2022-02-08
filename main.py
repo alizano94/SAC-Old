@@ -21,8 +21,8 @@ RL = RL()
 #Define Variables
 #FLAGS
 cnn_train = False
-snn_train = False
-rl_train = True
+snn_train = True
+rl_train = False
 preprocess_snnDS = False
 Test_CNN = False
 Test_SNN = False
@@ -88,8 +88,8 @@ if rl_train:
 	q_table = RL.get_Q_table(snn_model,memory,k,a_size=V_levels)
 else:
 	pass
-	print('Loading Q table...')
-	q_table = np.load(q_table_file)
+	#print('Loading Q table...')
+	#q_table = np.load(q_table_file)
 
 #Test Data 
 #Test CNN accuracy.
