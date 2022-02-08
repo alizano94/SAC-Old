@@ -21,7 +21,7 @@ RL = RL()
 #Define Variables
 #FLAGS
 cnn_train = False
-snn_train = True
+snn_train = False
 rl_train = False
 preprocess_snnDS = False
 Test_CNN = False
@@ -32,7 +32,7 @@ Test_RL = False
 
 #Parameters
 k = 3
-memory = 4
+memory = 1
 window = 100
 V_levels = 4
 
