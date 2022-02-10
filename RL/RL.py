@@ -10,14 +10,13 @@ from SNN.SNN import *
 class RL():
 
 	def __init__(self):
-		pass
+		self.snn = SNN()
+		self.helpers = Helpers()
 
-	def get_Q_table(self,env,memory,k,a_size=4,episodes=50000):
+	def get_Q_table(self,memory,k,a_size=4,episodes=50000):
 		'''
 		Learns the q table 
 		'''
-		snn = SNN()
-		h = Helpers()
 
 		s_size = k**memory
 		out_file = './RL/Qtables/'+str(s_size)+'X'+str(a_size)+'Q_table'+str(memory)+'M.npy'
@@ -32,7 +31,7 @@ class RL():
 
 		for i in range(0, episodes):
 			state = np.random.choice(range(s_size))
-			v_state = h.stateDecoder(k,state,memory)
+			v_state = self.helpers.stateDecoder(k,state,memory)
 
 			epochs, penalties, reward, = 0, 0, 0
 			done = False
@@ -53,7 +52,7 @@ class RL():
 					state_value = v_state[j]
 					inp_feat[name] = np.array([float(state_value)])
 
-				next_state = int(snn.runSNN2(env,inp_feat))
+				next_state = int(self.snn.runSNN2(inp_feat))
 				reward = next_state - goal 
 
 				old_value = q_table[state, action-1]
@@ -64,7 +63,7 @@ class RL():
 				
 				v_state += [next_state]
 				v_state.pop(0)
-				state = h.stateEncoder(k,v_state)
+				state = self.helpers.stateEncoder(k,v_state)
 				epochs += 1
 
 				if v_state[-1] == goal:

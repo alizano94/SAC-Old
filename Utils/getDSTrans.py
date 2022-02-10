@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 DS_path = '/home/lizano/Documents/SAC/SNN/DS'
-csv_DS_path = os.path.join(DS_path,'Balanced-W100-M1.csv')
+csv_DS_path = os.path.join(DS_path,'Balanced-W100-M3.csv')
 tensor_save_path = os.path.join(DS_path,'DS_TransitionTensor.npy')
 
 DS_df = pd.read_csv(csv_DS_path)
@@ -23,6 +23,7 @@ for i in range(4):
         plt.subplot(4,3,3*i+j+1)
         height=trans_matrix[i,j,:]/sum(trans_matrix[i,j,:])
         plt.bar(x,height=height,color='red')
+        plt.ylim([0.0,1.0])
         plt.xticks(x,['Fluid','Defective','Crystal'])
         if 3*i+j+1 > 9:
             plt.xlabel('Tansition State')

@@ -25,23 +25,23 @@ snn_train = False
 rl_train = False
 preprocess_snnDS = False
 Test_CNN = False
-Test_SNN = False
+Test_SNN = True
 Test_RL = False
 
 
 
 #Parameters
 k = 3
-memory = 1
+memory = 4
 window = 100
 V_levels = 4
 
 #paths
-cnn_ds_dir = './CNN/DS'
+cnn_ds_dir = '/home/lizano/Documents/SAC/CNN/DS'
 snn_ds_dir = '/home/lizano/Documents/SAC/SNN/DS'
 rl_ds_dir = './RL/Qtables/'
 csv_snnDS_path = snn_ds_dir+'/Balanced-W'+str(window)+'-M'+str(memory)+'.csv'
-weights_dir = './SavedModels/'
+weights_dir = '/home/lizano/Documents/SAC/SavedModels/'
 cnn_weights = weights_dir+'CNN.h5'
 snn_weights = weights_dir+'SNN'+str(window)+'-M'+str(memory)+'.h5'
 q_table_file = rl_ds_dir+str(k**(memory))+'X'+str(V_levels)+'Q_table'+str(memory)+'M.npy'
@@ -74,7 +74,7 @@ else:
 if snn_train:
 	if os.path.isfile(snn_weights):
 		os.remove(snn_weights)
-	SNN.trainModel(csv_snnDS_path,snn_model,epochs=100,batch=6)
+	SNN.trainModel(csv_snnDS_path,epochs=100,batch=6)
 	Helpers.saveWeights(snn_model,snn_weights)
 else:
 	print('Loading SNN model...')
@@ -98,8 +98,8 @@ if Test_CNN:
 	print('Prediction accuracy for CNN :'+str(score))
 
 if Test_SNN:
-	Helpers.DataTrasnProbPlot(window,memory,k)
-	SNN.testSNN(snn_model,window,memory,k)
+	#Helpers.DataTrasnProbPlot(window,memory,k)
+	SNN.testSNN(window,memory,k)
 
 if Test_RL:
 	#Add RL heat map method

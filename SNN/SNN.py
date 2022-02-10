@@ -18,7 +18,6 @@ class SNN():
 	def __init__(self):
 		self.helpers = Helpers()
 		self.cnn = CNN()
-		pass
 
 	def createDS(self,path,window,memory):
 		'''
@@ -132,14 +131,14 @@ class SNN():
 		# The output is deterministic: a single point estimate.
 		outputs = layers.Dense(3, activation='softmax')(features)
 
-		model = keras.Model(inputs=inputs, outputs=outputs)
+		self.model = keras.Model(inputs=inputs, outputs=outputs)
 
-		model.compile(
+		self.model.compile(
 			loss = 'categorical_crossentropy',
 			optimizer='adam'
 			)
 		if summary:
-			model.summary()
+			self.model.summary()
 			tf.keras.utils.plot_model(
 				model = model,
 				rankdir="TB",
@@ -147,7 +146,7 @@ class SNN():
 				show_shapes=True
 				)
 
-		return model
+		return self.model
 
 	def createDNN(self,step,summary=False):
 		'''
@@ -179,14 +178,14 @@ class SNN():
 		# The output is deterministic: a single point estimate.
 		outputs = layers.Dense(3, activation='softmax')(features)
 
-		model = keras.Model(inputs=inputs, outputs=outputs)
+		self.model = keras.Model(inputs=inputs, outputs=outputs)
 
-		model.compile(
+		self.model.compile(
 			loss = 'categorical_crossentropy',
 			optimizer='adam'
 			)
 		if summary:
-			model.summary()
+			self.model.summary()
 			tf.keras.utils.plot_model(
 				model = model,
 				rankdir="TB",
@@ -194,7 +193,7 @@ class SNN():
 				show_shapes=True
 				)
 
-		return model
+		return self.model
 
 	def createRNN(self,step,summary=False,keep_v=False):
 		'''
@@ -256,17 +255,17 @@ class SNN():
 		# The output is deterministic: a single point estimate.
 		outputs = layers.Dense(3, activation='softmax')(features)
 
-		model = keras.Model(inputs=inputs, outputs=outputs)
+		self.model = keras.Model(inputs=inputs, outputs=outputs)
 
 		#opt = keras.optimizers.Adam(learning_rate=0.01)
 
 
-		model.compile(
+		self.model.compile(
 			loss = 'categorical_crossentropy',
 			optimizer='adam'
 			)
 		if summary:
-			model.summary()
+			self.model.summary()
 			tf.keras.utils.plot_model(
 				model = model,
 				rankdir="TB",
@@ -274,7 +273,7 @@ class SNN():
 				show_shapes=True
 				)
 
-		return model
+		return self.model
 
 	def createDSNN(self,step,summary=False):
 		'''
@@ -314,14 +313,14 @@ class SNN():
 		# The output is deterministic: a single point estimate.
 		outputs = layers.Dense(3, activation='softmax')(features)
 
-		model = keras.Model(inputs=inputs, outputs=outputs)
+		self.model = keras.Model(inputs=inputs, outputs=outputs)
 
-		model.compile(
+		self.model.compile(
 			loss = 'categorical_crossentropy',
 			optimizer='adam'
 			)
 		if summary:
-			model.summary()
+			self.model.summary()
 			tf.keras.utils.plot_model(
 				model = model,
 				rankdir="TB",
@@ -329,25 +328,24 @@ class SNN():
 				show_shapes=True
 				)
 
-		return model
+		return self.model
 
-	def trainModel(self,path,model,epochs=10,batch=5,plot=True):
+	def trainModel(self,path,epochs=10,batch=5,plot=True):
 		'''
 		A function that trains a SNN given the model
 		and the PATH of the data set.
 		'''
-		h = Helpers()
 
 		data = pd.read_csv(path)
 
 		
-		train_features = h.df2dict(data)
-		train_labels = h.onehotencoded(data)
+		train_features = self.helpers.df2dict(data)
+		train_labels = self.helpers.onehotencoded(data)
 
 		print(train_features)
 		print(train_labels)
 
-		history = model.fit(train_features,
+		history = self.model.fit(train_features,
 			train_labels,
 			epochs=epochs,
 			batch_size=batch,
@@ -371,7 +369,7 @@ class SNN():
 	                  yaxis=dict(title='Loss'))
 			fig.show()
 
-	def runSNN(self,model,inp):
+	def runSNN(self,inp):
 		'''
 		Function that runs SNN.
 		Args:
@@ -381,10 +379,10 @@ class SNN():
 			-out
 		'''
 
-		out = model.predict(inp)
+		out = self.model.predict(inp)
 		return out
 
-	def runSNN2(self,model,inp):
+	def runSNN2(self,inp):
 		'''
 		Function that runs SNN.
 		Args:
@@ -394,12 +392,12 @@ class SNN():
 			-out
 		'''
 
-		probs = model.predict(inp)
+		probs = self.model.predict(inp)
 		cat_dist = tfp.distributions.Categorical(probs=probs[0])		
 		out = cat_dist.sample(1)[0]
 		return out
 
-	def trajectory(self,step,model,init,length):
+	def trajectory(self,step,init,length):
 		'''
 		Function that runs SNN.
 		Args:
@@ -414,7 +412,7 @@ class SNN():
 		for i in range(length):
 			#print(init)
 			v_traj.append(init['V'])
-			probs = self.runSNN(model,init)
+			probs = self.runSNN(self.model,init)
 			cat_dist = tfp.distributions.Categorical(probs=probs[0])		
 			So = cat_dist.sample(1)[0]
 			
@@ -427,45 +425,58 @@ class SNN():
 				init[name] = init[past_state]
 		return trajectory, v_traj
 
-	def testSNN(self,model,W,M,k):
+	def testSNN(self,W,M,k):
 		'''
 		'''
-		h = Helpers()
+		DS_path = '/home/lizano/Documents/SAC/SNN/DS'
+		csv_DS_name = 'Balanced-W'+str(W)+'-M'+str(M)+'.csv'
+		csv_DS_path = os.path.join(DS_path,csv_DS_name)
+		tensor_save_path = os.path.join(DS_path,'SNN_TransitionTensor.npy')
+		DS_df = pd.read_csv(csv_DS_path)
+		trans_matrix = np.zeros((4,3,3))
 
-		size = k**M
-		bars = []
-		volt_lvl = [1,2,3,4]
+		for v in range(4):
+			for encode_state in range(k**M):
+				decode_state = self.helpers.stateDecoder(k,encode_state,M)
+				inp_feat = {'V':np.array([float(v+1)])}
+				for j in range(M):
+					name = 'S'+str(j-M)
+					state_value = decode_state[j]
+					inp_feat[name] = np.array([float(state_value)])
+				print(inp_feat)
+				for i in range(100):
+					hist = self.model.predict(inp_feat)
+					cat_dist = tfp.distributions.Categorical(probs=hist[0])		
+					out = cat_dist.sample(1)[0]
+					trans_matrix[int(inp_feat['V'])-1,int(inp_feat['S-1']),int(out)] += 1
 
-		for i in range(k):
-			state = 'S'+str(i)
-			bars += [state]
+		#for _, rows in DS_df.iterrows():
+		#	search_dict = {'V':np.array([float(rows['V'])])}
+		#	for i in range(M):
+		#		name = 'S'+str(i-M)
+		#		search_dict[name] = np.array([float(rows[name])])
+		#	hist = self.model.predict(search_dict)
+		#	cat_dist = tfp.distributions.Categorical(probs=hist[0])		
+		#	out = cat_dist.sample(1)[0]
 
-		x_pos = np.arange(len(bars))
-		plt.yticks(color='black')
-		
-		save_path = '/home/lizano/Documents/CSA-Loop/Results/SNN/plots/'
+		#	trans_matrix[int(rows['V'])-1,int(rows['S-1']),int(out)] += 1
+		np.save(tensor_save_path,trans_matrix)
 
-		for V in volt_lvl:
-			for encoded in range(size):
-				state = h.stateDecoder(k,encoded,M)
-				print(state)
+		x=np.arange(3)
+		titles = ['Fluid','Defective','Crystal']
 
-				search_dict = {'V':np.array([float(V)])}
-				for i in range(M):
-					name = 'S'+str(i-M)
-					search_dict[name] = np.array([float(state[i])])
-				print(search_dict)
+		for i in range(4):
+			for j in range(3):
+				plt.subplot(4,3,3*i+j+1)
+				height=trans_matrix[i,j,:]/sum(trans_matrix[i,j,:])
+				plt.bar(x,height=height,color='black')
+				plt.ylim([0.0,1.0])
+				plt.xticks(x,['Fluid','Defective','Crystal'])
+				if 3*i+j+1 > 9:
+					plt.xlabel('Tansition State')
+				if 3*i+j+1 < 4:
+					plt.title('Initial State: '+titles[j])
+				if j == 0:
+					plt.ylabel('Applied Voltage: V'+str(i+1))
 
-				hist = model.predict(search_dict)
-				print(hist[0])
-
-
-				fig_name = save_path + 'V'+str(V)
-				for i in range(M):
-					name = 'S'+str(i-M)
-					fig_name += '-'+name+str(int(search_dict[name]))
-				fig_name += '.png'
-				plt.xticks(x_pos, bars, color='black')
-				plt.bar(x_pos,hist[0],color='black')
-				plt.savefig(fig_name)
-				plt.clf()
+		plt.show()
