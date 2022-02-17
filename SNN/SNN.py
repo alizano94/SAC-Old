@@ -61,7 +61,7 @@ class SNN():
 										pass
 
 		data.reset_index(inplace=True)						
-		data = self.helpers.DropBiasData(data)
+		#data = self.helpers.DropBiasData(data)
 		#data.drop(columns=['level_0'],inplace=True)
 		print('Saving DS of size: '+str(len(data)))
 		print(ds_name)
@@ -250,7 +250,7 @@ class SNN():
 		#using the DenseVariational layer.
 		for units in [64,128]:
 			features = layers.Dense(units=units,activation="sigmoid")(features)
-			features = layers.Dropout(0.2)(features)
+			features = layers.Dropout(0.3)(features)
 
 		# The output is deterministic: a single point estimate.
 		outputs = layers.Dense(3, activation='softmax')(features)
