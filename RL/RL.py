@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from IPython.display import clear_output
 
@@ -13,13 +14,15 @@ class RL():
 		self.snn = SNN()
 		self.helpers = Helpers()
 
-	def get_Q_table(self,memory,k,a_size=4,episodes=50000):
+	def get_Q_table(self,model,memory,k,a_size=4,episodes=1000):
 		'''
 		Learns the q table 
 		'''
 
 		s_size = k**memory
-		out_file = './RL/Qtables/'+str(s_size)+'X'+str(a_size)+'Q_table'+str(memory)+'M.npy'
+		rl_ds_dir = '/home/lizano/Documents/SAC/RL/Qtables/'
+		out_file = str(s_size)+'X'+str(a_size)+'Q_table'+str(memory)+'M.npy'
+		out_file = os.path.join(rl_ds_dir,out_file)
 		q_table = np.random.rand(s_size,a_size)
 
 		# Hyperparameters
@@ -52,7 +55,7 @@ class RL():
 					state_value = v_state[j]
 					inp_feat[name] = np.array([float(state_value)])
 
-				next_state = int(self.snn.runSNN2(inp_feat))
+				next_state = int(self.snn.runSNN2(model,inp_feat))
 				reward = next_state - goal 
 
 				old_value = q_table[state, action-1]

@@ -140,7 +140,7 @@ class SNN():
 		if summary:
 			self.model.summary()
 			tf.keras.utils.plot_model(
-				model = model,
+				model = self.model,
 				rankdir="TB",
 				dpi=72,
 				show_shapes=True
@@ -187,7 +187,7 @@ class SNN():
 		if summary:
 			self.model.summary()
 			tf.keras.utils.plot_model(
-				model = model,
+				model = self.model,
 				rankdir="TB",
 				dpi=72,
 				show_shapes=True
@@ -267,7 +267,7 @@ class SNN():
 		if summary:
 			self.model.summary()
 			tf.keras.utils.plot_model(
-				model = model,
+				model = self.model,
 				rankdir="TB",
 				dpi=72,
 				show_shapes=True
@@ -322,7 +322,7 @@ class SNN():
 		if summary:
 			self.model.summary()
 			tf.keras.utils.plot_model(
-				model = model,
+				model = self.model,
 				rankdir="TB",
 				dpi=72,
 				show_shapes=True
@@ -382,7 +382,7 @@ class SNN():
 		out = self.model.predict(inp)
 		return out
 
-	def runSNN2(self,inp):
+	def runSNN2(self,model,inp):
 		'''
 		Function that runs SNN.
 		Args:
@@ -391,8 +391,7 @@ class SNN():
 		Returns:
 			-out
 		'''
-
-		probs = self.model.predict(inp)
+		probs = model.predict(inp)
 		cat_dist = tfp.distributions.Categorical(probs=probs[0])		
 		out = cat_dist.sample(1)[0]
 		return out
@@ -428,6 +427,9 @@ class SNN():
 	def testSNN(self,W,M,k):
 		'''
 		'''
+		test_all_states = False
+		replicate_DS = True
+
 		DS_path = '/home/lizano/Documents/SAC/SNN/DS'
 		csv_DS_name = 'Balanced-W'+str(W)+'-M'+str(M)+'.csv'
 		csv_DS_path = os.path.join(DS_path,csv_DS_name)
@@ -435,31 +437,47 @@ class SNN():
 		DS_df = pd.read_csv(csv_DS_path)
 		trans_matrix = np.zeros((4,3,3))
 
-		for v in range(4):
-			for encode_state in range(k**M):
-				decode_state = self.helpers.stateDecoder(k,encode_state,M)
-				inp_feat = {'V':np.array([float(v+1)])}
-				for j in range(M):
-					name = 'S'+str(j-M)
-					state_value = decode_state[j]
-					inp_feat[name] = np.array([float(state_value)])
+		if test_all_states:
+			for v in range(4):
+				for encode_state in range(k**M):
+					decode_state = self.helpers.stateDecoder(k,encode_state,M)
+					inp_feat = {'V':np.array([float(v+1)])}
+					for j in range(M):
+						name = 'S'+str(j-M)
+						state_value = decode_state[j]
+						inp_feat[name] = np.array([float(state_value)])
+					print(inp_feat)
+					for i in range(100):
+						hist = self.model.predict(inp_feat)
+						cat_dist = tfp.distributions.Categorical(probs=hist[0])		
+						out = cat_dist.sample(1)[0]
+						trans_matrix[int(inp_feat['V'])-1,int(inp_feat['S-1']),int(out)] += 1
+		elif replicate_DS:
+			for _, rows in DS_df.iterrows():
+				inp_feat = {'V':np.array([float(rows['V'])])}
+				for i in range(M):
+					name = 'S'+str(i-M)
+					inp_feat[name] = np.array([float(rows[name])])
 				print(inp_feat)
-				for i in range(100):
+				hist = self.model.predict(inp_feat)
+				cat_dist = tfp.distributions.Categorical(probs=hist[0])		
+				out = cat_dist.sample(1)[0]
+				trans_matrix[int(rows['V'])-1,int(rows['S-1']),int(out)] += 1
+		else:
+			for v in range(4):
+				for initial_state in range(3):
+					inp_feat = {'V':np.array([float(v+1)])}
+					for j in range(M):
+						name = 'S'+str(j-M)
+						inp_feat[name] = np.array([float(initial_state)])
+					print(inp_feat)
 					hist = self.model.predict(inp_feat)
-					cat_dist = tfp.distributions.Categorical(probs=hist[0])		
-					out = cat_dist.sample(1)[0]
-					trans_matrix[int(inp_feat['V'])-1,int(inp_feat['S-1']),int(out)] += 1
-
-		#for _, rows in DS_df.iterrows():
-		#	search_dict = {'V':np.array([float(rows['V'])])}
-		#	for i in range(M):
-		#		name = 'S'+str(i-M)
-		#		search_dict[name] = np.array([float(rows[name])])
-		#	hist = self.model.predict(search_dict)
-		#	cat_dist = tfp.distributions.Categorical(probs=hist[0])		
-		#	out = cat_dist.sample(1)[0]
-
-		#	trans_matrix[int(rows['V'])-1,int(rows['S-1']),int(out)] += 1
+					print(hist)
+					cat_dist = tfp.distributions.Categorical(probs=hist[0])
+					for i in range(10000):		
+						out = cat_dist.sample(1)[0]
+						trans_matrix[int(inp_feat['V'])-1,int(inp_feat['S-1']),int(out)] += 1
+		
 		np.save(tensor_save_path,trans_matrix)
 
 		x=np.arange(3)

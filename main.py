@@ -21,25 +21,25 @@ RL = RL()
 #Define Variables
 #FLAGS
 cnn_train = False
-snn_train = False
-rl_train = False
+snn_train = True
+rl_train = True
 preprocess_snnDS = False
 Test_CNN = False
-Test_SNN = True
+Test_SNN = False
 Test_RL = False
 
 
 
 #Parameters
 k = 3
-memory = 4
-window = 100
+memory = 1
+window = 50
 V_levels = 4
 
 #paths
 cnn_ds_dir = '/home/lizano/Documents/SAC/CNN/DS'
 snn_ds_dir = '/home/lizano/Documents/SAC/SNN/DS'
-rl_ds_dir = './RL/Qtables/'
+rl_ds_dir = '/home/lizano/Documents/SAC/RL/Qtables/'
 csv_snnDS_path = snn_ds_dir+'/Balanced-W'+str(window)+'-M'+str(memory)+'.csv'
 weights_dir = '/home/lizano/Documents/SAC/SavedModels/'
 cnn_weights = weights_dir+'CNN.h5'
@@ -87,9 +87,8 @@ if rl_train:
 		os.remove(q_table_file)
 	q_table = RL.get_Q_table(snn_model,memory,k,a_size=V_levels)
 else:
-	pass
-	#print('Loading Q table...')
-	#q_table = np.load(q_table_file)
+	print('Loading Q table...')
+	q_table = np.load(q_table_file)
 
 #Test Data 
 #Test CNN accuracy.

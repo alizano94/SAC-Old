@@ -139,6 +139,7 @@ class Helpers():
 
 		out_df = pd.DataFrame(columns=columns)
 		new_size = int(len(data) - memory*window/sampling_ts)
+		#refactor this to use all the data set competting with augmented data
 
 		for index, rows in data.iterrows():
 			row = {}
@@ -184,7 +185,7 @@ class Helpers():
 			index = randint(0,len(data)-1)
 			hist_index = int(data['S0'][index])
 			if hist[hist_index] > min_hist:
-		 		data.drop(index=index, inplace=True)
+				data.drop(index=index, inplace=True)
 			hist = self.createhist(data)
 			data.reset_index(inplace=True)
 			data.drop(columns=['index'],inplace=True)
