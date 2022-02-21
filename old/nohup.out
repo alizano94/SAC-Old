@@ -1,0 +1,515 @@
+2021-12-14 14:57:06.968212: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2021-12-14 14:57:06.968247: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2021-12-14 14:57:08.421910: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2021-12-14 14:57:08.421933: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2021-12-14 14:57:08.421947: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (LizanoTG): /proc/driver/nvidia/version does not exist
+2021-12-14 14:57:08.422082: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading CNN model...
+Loaded model from disk
+{'S-4': <KerasTensor: shape=(None, 1) dtype=float32 (created by layer 'S-4')>, 'S-3': <KerasTensor: shape=(None, 1) dtype=float32 (created by layer 'S-3')>, 'S-2': <KerasTensor: shape=(None, 1) dtype=float32 (created by layer 'S-2')>, 'S-1': <KerasTensor: shape=(None, 1) dtype=float32 (created by layer 'S-1')>, 'V': <KerasTensor: shape=(None, 1) dtype=float32 (created by layer 'V')>}
+Loading SNN model...
+Loaded model from disk
+[2K2021-12-14 14:57:08.718699: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+[2KEpisode: 0
+[2K[2KEpisode: 100
+[2K[2KEpisode: 200
+[2K[2KEpisode: 300
+[2K[2KEpisode: 400
+[2K[2KEpisode: 500
+[2K[2KEpisode: 600
+[2K[2KEpisode: 700
+[2K[2KEpisode: 800
+[2K[2KEpisode: 900
+[2K[2KEpisode: 1000
+[2K[2KEpisode: 1100
+[2K[2KEpisode: 1200
+[2K[2KEpisode: 1300
+[2K[2KEpisode: 1400
+[2K[2KEpisode: 1500
+[2K[2KEpisode: 1600
+[2K[2KEpisode: 1700
+[2K[2KEpisode: 1800
+[2K[2KEpisode: 1900
+[2K[2KEpisode: 2000
+[2K[2KEpisode: 2100
+[2K[2KEpisode: 2200
+[2K[2KEpisode: 2300
+[2K[2KEpisode: 2400
+[2K[2KEpisode: 2500
+[2K[2KEpisode: 2600
+[2K[2KEpisode: 2700
+[2K[2KEpisode: 2800
+[2K[2KEpisode: 2900
+[2K[2KEpisode: 3000
+[2K[2KEpisode: 3100
+[2K[2KEpisode: 3200
+[2K[2KEpisode: 3300
+[2K[2KEpisode: 3400
+[2K[2KEpisode: 3500
+[2K[2KEpisode: 3600
+[2K[2KEpisode: 3700
+[2K[2KEpisode: 3800
+[2K[2KEpisode: 3900
+[2K[2KEpisode: 4000
+[2K[2KEpisode: 4100
+[2K[2KEpisode: 4200
+[2K[2KEpisode: 4300
+[2K[2KEpisode: 4400
+[2K[2KEpisode: 4500
+[2K[2KEpisode: 4600
+[2K[2KEpisode: 4700
+[2K[2KEpisode: 4800
+[2K[2KEpisode: 4900
+[2K[2KEpisode: 5000
+[2K[2KEpisode: 5100
+[2K[2KEpisode: 5200
+[2K[2KEpisode: 5300
+[2K[2KEpisode: 5400
+[2K[2KEpisode: 5500
+[2K[2KEpisode: 5600
+[2K[2KEpisode: 5700
+[2K[2KEpisode: 5800
+[2K[2KEpisode: 5900
+[2K[2KEpisode: 6000
+[2K[2KEpisode: 6100
+[2K[2KEpisode: 6200
+[2K[2KEpisode: 6300
+[2K[2KEpisode: 6400
+[2K[2KEpisode: 6500
+[2K[2KEpisode: 6600
+[2K[2KEpisode: 6700
+[2K[2KEpisode: 6800
+[2K[2KEpisode: 6900
+[2K[2KEpisode: 7000
+[2K[2KEpisode: 7100
+[2K[2KEpisode: 7200
+[2K[2KEpisode: 7300
+[2K[2KEpisode: 7400
+[2K[2KEpisode: 7500
+[2K[2KEpisode: 7600
+[2K[2KEpisode: 7700
+[2K[2KEpisode: 7800
+[2K[2KEpisode: 7900
+[2K[2KEpisode: 8000
+[2K[2KEpisode: 8100
+[2K[2KEpisode: 8200
+[2K[2KEpisode: 8300
+[2K[2KEpisode: 8400
+[2K[2KEpisode: 8500
+[2K[2KEpisode: 8600
+[2K[2KEpisode: 8700
+[2K[2KEpisode: 8800
+[2K[2KEpisode: 8900
+[2K[2KEpisode: 9000
+[2K[2KEpisode: 9100
+[2K[2KEpisode: 9200
+[2K[2KEpisode: 9300
+[2K[2KEpisode: 9400
+[2K[2KEpisode: 9500
+[2K[2KEpisode: 9600
+[2K[2KEpisode: 9700
+[2K[2KEpisode: 9800
+[2K[2KEpisode: 9900
+[2K[2KEpisode: 10000
+[2K[2KEpisode: 10100
+[2K[2KEpisode: 10200
+[2K[2KEpisode: 10300
+[2K[2KEpisode: 10400
+[2K[2KEpisode: 10500
+[2K[2KEpisode: 10600
+[2K[2KEpisode: 10700
+[2K[2KEpisode: 10800
+[2K[2KEpisode: 10900
+[2K[2KEpisode: 11000
+[2K[2KEpisode: 11100
+[2K[2KEpisode: 11200
+[2K[2KEpisode: 11300
+[2K[2KEpisode: 11400
+[2K[2KEpisode: 11500
+[2K[2KEpisode: 11600
+[2K[2KEpisode: 11700
+[2K[2KEpisode: 11800
+[2K[2KEpisode: 11900
+[2K[2KEpisode: 12000
+[2K[2KEpisode: 12100
+[2K[2KEpisode: 12200
+[2K[2KEpisode: 12300
+[2K[2KEpisode: 12400
+[2K[2KEpisode: 12500
+[2K[2KEpisode: 12600
+[2K[2KEpisode: 12700
+[2K[2KEpisode: 12800
+[2K[2KEpisode: 12900
+[2K[2KEpisode: 13000
+[2K[2KEpisode: 13100
+[2K[2KEpisode: 13200
+[2K[2KEpisode: 13300
+[2K[2KEpisode: 13400
+[2K[2KEpisode: 13500
+[2K[2KEpisode: 13600
+[2K[2KEpisode: 13700
+[2K[2KEpisode: 13800
+[2K[2KEpisode: 13900
+[2K[2KEpisode: 14000
+[2K[2KEpisode: 14100
+[2K[2KEpisode: 14200
+[2K[2KEpisode: 14300
+[2K[2KEpisode: 14400
+[2K[2KEpisode: 14500
+[2K[2KEpisode: 14600
+[2K[2KEpisode: 14700
+[2K[2KEpisode: 14800
+[2K[2KEpisode: 14900
+[2K[2KEpisode: 15000
+[2K[2KEpisode: 15100
+[2K[2KEpisode: 15200
+[2K[2KEpisode: 15300
+[2K[2KEpisode: 15400
+[2K[2KEpisode: 15500
+[2K[2KEpisode: 15600
+[2K[2KEpisode: 15700
+[2K[2KEpisode: 15800
+[2K[2KEpisode: 15900
+[2K[2KEpisode: 16000
+[2K[2KEpisode: 16100
+[2K[2KEpisode: 16200
+[2K[2KEpisode: 16300
+[2K[2KEpisode: 16400
+[2K[2KEpisode: 16500
+[2K[2KEpisode: 16600
+[2K[2KEpisode: 16700
+[2K[2KEpisode: 16800
+[2K[2KEpisode: 16900
+[2K[2KEpisode: 17000
+[2K[2KEpisode: 17100
+[2K[2KEpisode: 17200
+[2K[2KEpisode: 17300
+[2K[2KEpisode: 17400
+[2K[2KEpisode: 17500
+[2K[2KEpisode: 17600
+[2K[2KEpisode: 17700
+[2K[2KEpisode: 17800
+[2K[2KEpisode: 17900
+[2K[2KEpisode: 18000
+[2K[2KEpisode: 18100
+[2K[2KEpisode: 18200
+[2K[2KEpisode: 18300
+[2K[2KEpisode: 18400
+[2K[2KEpisode: 18500
+[2K[2KEpisode: 18600
+[2K[2KEpisode: 18700
+[2K[2KEpisode: 18800
+[2K[2KEpisode: 18900
+[2K[2KEpisode: 19000
+[2K[2KEpisode: 19100
+[2K[2KEpisode: 19200
+[2K[2KEpisode: 19300
+[2K[2KEpisode: 19400
+[2K[2KEpisode: 19500
+[2K[2KEpisode: 19600
+[2K[2KEpisode: 19700
+[2K[2KEpisode: 19800
+[2K[2KEpisode: 19900
+[2K[2KEpisode: 20000
+[2K[2KEpisode: 20100
+[2K[2KEpisode: 20200
+[2K[2KEpisode: 20300
+[2K[2KEpisode: 20400
+[2K[2KEpisode: 20500
+[2K[2KEpisode: 20600
+[2K[2KEpisode: 20700
+[2K[2KEpisode: 20800
+[2K[2KEpisode: 20900
+[2K[2KEpisode: 21000
+[2K[2KEpisode: 21100
+[2K[2KEpisode: 21200
+[2K[2KEpisode: 21300
+[2K[2KEpisode: 21400
+[2K[2KEpisode: 21500
+[2K[2KEpisode: 21600
+[2K[2KEpisode: 21700
+[2K[2KEpisode: 21800
+[2K[2KEpisode: 21900
+[2K[2KEpisode: 22000
+[2K[2KEpisode: 22100
+[2K[2KEpisode: 22200
+[2K[2KEpisode: 22300
+[2K[2KEpisode: 22400
+[2K[2KEpisode: 22500
+[2K[2KEpisode: 22600
+[2K[2KEpisode: 22700
+[2K[2KEpisode: 22800
+[2K[2KEpisode: 22900
+[2K[2KEpisode: 23000
+[2K[2KEpisode: 23100
+[2K[2KEpisode: 23200
+[2K[2KEpisode: 23300
+[2K[2KEpisode: 23400
+[2K[2KEpisode: 23500
+[2K[2KEpisode: 23600
+[2K[2KEpisode: 23700
+[2K[2KEpisode: 23800
+[2K[2KEpisode: 23900
+[2K[2KEpisode: 24000
+[2K[2KEpisode: 24100
+[2K[2KEpisode: 24200
+[2K[2KEpisode: 24300
+[2K[2KEpisode: 24400
+[2K[2KEpisode: 24500
+[2K[2KEpisode: 24600
+[2K[2KEpisode: 24700
+[2K[2KEpisode: 24800
+[2K[2KEpisode: 24900
+[2K[2KEpisode: 25000
+[2K[2KEpisode: 25100
+[2K[2KEpisode: 25200
+[2K[2KEpisode: 25300
+[2K[2KEpisode: 25400
+[2K[2KEpisode: 25500
+[2K[2KEpisode: 25600
+[2K[2KEpisode: 25700
+[2K[2KEpisode: 25800
+[2K[2KEpisode: 25900
+[2K[2KEpisode: 26000
+[2K[2KEpisode: 26100
+[2K[2KEpisode: 26200
+[2K[2KEpisode: 26300
+[2K[2KEpisode: 26400
+[2K[2KEpisode: 26500
+[2K[2KEpisode: 26600
+[2K[2KEpisode: 26700
+[2K[2KEpisode: 26800
+[2K[2KEpisode: 26900
+[2K[2KEpisode: 27000
+[2K[2KEpisode: 27100
+[2K[2KEpisode: 27200
+[2K[2KEpisode: 27300
+[2K[2KEpisode: 27400
+[2K[2KEpisode: 27500
+[2K[2KEpisode: 27600
+[2K[2KEpisode: 27700
+[2K[2KEpisode: 27800
+[2K[2KEpisode: 27900
+[2K[2KEpisode: 28000
+[2K[2KEpisode: 28100
+[2K[2KEpisode: 28200
+[2K[2KEpisode: 28300
+[2K[2KEpisode: 28400
+[2K[2KEpisode: 28500
+[2K[2KEpisode: 28600
+[2K[2KEpisode: 28700
+[2K[2KEpisode: 28800
+[2K[2KEpisode: 28900
+[2K[2KEpisode: 29000
+[2K[2KEpisode: 29100
+[2K[2KEpisode: 29200
+[2K[2KEpisode: 29300
+[2K[2KEpisode: 29400
+[2K[2KEpisode: 29500
+[2K[2KEpisode: 29600
+[2K[2KEpisode: 29700
+[2K[2KEpisode: 29800
+[2K[2KEpisode: 29900
+[2K[2KEpisode: 30000
+[2K[2KEpisode: 30100
+[2K[2KEpisode: 30200
+[2K[2KEpisode: 30300
+[2K[2KEpisode: 30400
+[2K[2KEpisode: 30500
+[2K[2KEpisode: 30600
+[2K[2KEpisode: 30700
+[2K[2KEpisode: 30800
+[2K[2KEpisode: 30900
+[2K[2KEpisode: 31000
+[2K[2KEpisode: 31100
+[2K[2KEpisode: 31200
+[2K[2KEpisode: 31300
+[2K[2KEpisode: 31400
+[2K[2KEpisode: 31500
+[2K[2KEpisode: 31600
+[2K[2KEpisode: 31700
+[2K[2KEpisode: 31800
+[2K[2KEpisode: 31900
+[2K[2KEpisode: 32000
+[2K[2KEpisode: 32100
+[2K[2KEpisode: 32200
+[2K[2KEpisode: 32300
+[2K[2KEpisode: 32400
+[2K[2KEpisode: 32500
+[2K[2KEpisode: 32600
+[2K[2KEpisode: 32700
+[2K[2KEpisode: 32800
+[2K[2KEpisode: 32900
+[2K[2KEpisode: 33000
+[2K[2KEpisode: 33100
+[2K[2KEpisode: 33200
+[2K[2KEpisode: 33300
+[2K[2KEpisode: 33400
+[2K[2KEpisode: 33500
+[2K[2KEpisode: 33600
+[2K[2KEpisode: 33700
+[2K[2KEpisode: 33800
+[2K[2KEpisode: 33900
+[2K[2KEpisode: 34000
+[2K[2KEpisode: 34100
+[2K[2KEpisode: 34200
+[2K[2KEpisode: 34300
+[2K[2KEpisode: 34400
+[2K[2KEpisode: 34500
+[2K[2KEpisode: 34600
+[2K[2KEpisode: 34700
+[2K[2KEpisode: 34800
+[2K[2KEpisode: 34900
+[2K[2KEpisode: 35000
+[2K[2KEpisode: 35100
+[2K[2KEpisode: 35200
+[2K[2KEpisode: 35300
+[2K[2KEpisode: 35400
+[2K[2KEpisode: 35500
+[2K[2KEpisode: 35600
+[2K[2KEpisode: 35700
+[2K[2KEpisode: 35800
+[2K[2KEpisode: 35900
+[2K[2KEpisode: 36000
+[2K[2KEpisode: 36100
+[2K[2KEpisode: 36200
+[2K[2KEpisode: 36300
+[2K[2KEpisode: 36400
+[2K[2KEpisode: 36500
+[2K[2KEpisode: 36600
+[2K[2KEpisode: 36700
+[2K[2KEpisode: 36800
+[2K[2KEpisode: 36900
+[2K[2KEpisode: 37000
+[2K[2KEpisode: 37100
+[2K[2KEpisode: 37200
+[2K[2KEpisode: 37300
+[2K[2KEpisode: 37400
+[2K[2KEpisode: 37500
+[2K[2KEpisode: 37600
+[2K[2KEpisode: 37700
+[2K[2KEpisode: 37800
+[2K[2KEpisode: 37900
+[2K[2KEpisode: 38000
+[2K[2KEpisode: 38100
+[2K[2KEpisode: 38200
+[2K[2KEpisode: 38300
+[2K[2KEpisode: 38400
+[2K[2KEpisode: 38500
+[2K[2KEpisode: 38600
+[2K[2KEpisode: 38700
+[2K[2KEpisode: 38800
+[2K[2KEpisode: 38900
+[2K[2KEpisode: 39000
+[2K[2KEpisode: 39100
+[2K[2KEpisode: 39200
+[2K[2KEpisode: 39300
+[2K[2KEpisode: 39400
+[2K[2KEpisode: 39500
+[2K[2KEpisode: 39600
+[2K[2KEpisode: 39700
+[2K[2KEpisode: 39800
+[2K[2KEpisode: 39900
+[2K[2KEpisode: 40000
+[2K[2KEpisode: 40100
+[2K[2KEpisode: 40200
+[2K[2KEpisode: 40300
+[2K[2KEpisode: 40400
+[2K[2KEpisode: 40500
+[2K[2KEpisode: 40600
+[2K[2KEpisode: 40700
+[2K[2KEpisode: 40800
+[2K[2KEpisode: 40900
+[2K[2KEpisode: 41000
+[2K[2KEpisode: 41100
+[2K[2KEpisode: 41200
+[2K[2KEpisode: 41300
+[2K[2KEpisode: 41400
+[2K[2KEpisode: 41500
+[2K[2KEpisode: 41600
+[2K[2KEpisode: 41700
+[2K[2KEpisode: 41800
+[2K[2KEpisode: 41900
+[2K[2KEpisode: 42000
+[2K[2KEpisode: 42100
+[2K[2KEpisode: 42200
+[2K[2KEpisode: 42300
+[2K[2KEpisode: 42400
+[2K[2KEpisode: 42500
+[2K[2KEpisode: 42600
+[2K[2KEpisode: 42700
+[2K[2KEpisode: 42800
+[2K[2KEpisode: 42900
+[2K[2KEpisode: 43000
+[2K[2KEpisode: 43100
+[2K[2KEpisode: 43200
+[2K[2KEpisode: 43300
+[2K[2KEpisode: 43400
+[2K[2KEpisode: 43500
+[2K[2KEpisode: 43600
+[2K[2KEpisode: 43700
+[2K[2KEpisode: 43800
+[2K[2KEpisode: 43900
+[2K[2KEpisode: 44000
+[2K[2KEpisode: 44100
+[2K[2KEpisode: 44200
+[2K[2KEpisode: 44300
+[2K[2KEpisode: 44400
+[2K[2KEpisode: 44500
+[2K[2KEpisode: 44600
+[2K[2KEpisode: 44700
+[2K[2KEpisode: 44800
+[2K[2KEpisode: 44900
+[2K[2KEpisode: 45000
+[2K[2KEpisode: 45100
+[2K[2KEpisode: 45200
+[2K[2KEpisode: 45300
+[2K[2KEpisode: 45400
+[2K[2KEpisode: 45500
+[2K[2KEpisode: 45600
+[2K[2KEpisode: 45700
+[2K[2KEpisode: 45800
+[2K[2KEpisode: 45900
+[2K[2KEpisode: 46000
+[2K[2KEpisode: 46100
+[2K[2KEpisode: 46200
+[2K[2KEpisode: 46300
+[2K[2KEpisode: 46400
+[2K[2KEpisode: 46500
+[2K[2KEpisode: 46600
+[2K[2KEpisode: 46700
+[2K[2KEpisode: 46800
+[2K[2KEpisode: 46900
+[2K[2KEpisode: 47000
+[2K[2KEpisode: 47100
+[2K[2KEpisode: 47200
+[2K[2KEpisode: 47300
+[2K[2KEpisode: 47400
+[2K[2KEpisode: 47500
+[2K[2KEpisode: 47600
+[2K[2KEpisode: 47700
+[2K[2KEpisode: 47800
+[2K[2KEpisode: 47900
+[2K[2KEpisode: 48000
+[2K[2KEpisode: 48100
+[2K[2KEpisode: 48200
+[2K[2KEpisode: 48300
+[2K[2KEpisode: 48400
+[2K[2KEpisode: 48500
+[2K[2KEpisode: 48600
+[2K[2KEpisode: 48700
+[2K[2KEpisode: 48800
+[2K[2KEpisode: 48900
+[2K[2KEpisode: 49000
+[2K[2KEpisode: 49100
+[2K[2KEpisode: 49200
+[2K[2KEpisode: 49300
+[2K[2KEpisode: 49400
+[2K[2KEpisode: 49500
+[2K[2KEpisode: 49600
+[2K[2KEpisode: 49700
+[2K[2KEpisode: 49800
+[2K[2KEpisode: 49900
+Training finished.
+
