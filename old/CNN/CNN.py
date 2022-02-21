@@ -9,12 +9,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 import plotly.graph_objects as go
 
-
-from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
-from tensorflow.keras.preprocessing import image
-from keras.models import model_from_json
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
 from Utils.Helpers import *
 
 
