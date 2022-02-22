@@ -14,7 +14,8 @@ from src.helpers import Helpers
 class CNN(Helpers):
     def __init__(self, *args, **kwargs):
         super(CNN, self).__init__(*args, **kwargs)
-        self.path = '/home/lizano/Documents/SAC/data/raw/cnn'
+        self.ds_path = '/home/lizano/Documents/SAC/data/raw/cnn'
+        self.weights_path = '/home/lizano/Documents/SAC/models/cnn/CNN.h5'
         self.k = len(os.listdir(os.path.join(self.path,'train')))
         self.IMG_H=212
         self.IMG_W=212
@@ -69,8 +70,8 @@ class CNN(Helpers):
         A function that trains a CNN given the model
         and the PATH of the data set.
         '''
-        train_dir = os.path.join(self.path,'train')
-        test_dir = os.path.join(self.path,'test')
+        train_dir = os.path.join(self.ds_path,'train')
+        test_dir = os.path.join(self.ds_path,'test')
         train_crystal_dir = os.path.join(train_dir,'0')
         train_fluid_dir = os.path.join(train_dir,'1')
         train_defective_dir = os.path.join(train_dir,'2')
@@ -133,3 +134,69 @@ class CNN(Helpers):
                     xaxis=dict(title='Epoch'),
                     yaxis=dict(title='Percentage'))
         fig.show()
+
+    def loadWeights(self,path):
+        '''
+        Functions that loads weight for the model
+        args:
+			-path: path from which to load weights
+		'''
+        if path == None:
+            path = self.weights_path
+        #Load model wieghts
+        self.model.load_weights(path)
+        print("Loaded model from disk")
+
+    def runCNN(self,img_path):
+        '''
+        Method that receives image and returns label of image.
+        args:
+            -img_path: path to image to be classified. 
+        returns:
+            -label of the classified image.
+            -probabilities of the classified image.
+        '''
+        img_batch = self.preProcessImg(img_path)
+        prediction = self.model.predict(img_batch)
+        #cat_index = np.argmax(prediction[0])
+        
+        return np.argmax(prediction[0]), prediction
+
+class CNN_Testing(CNN):
+    def __init__(self, *args, **kwargs):
+        super(CNN_Testing, self).__init__(*args, **kwargs)
+
+    def testCNN(self,path):
+        '''
+        Function thats test the CNN against its own DS.
+        Return class mtrix as numpy array
+        '''
+        Conf_Mat = np.zeros([3,3])
+        data = pd.DataFrame()
+        
+        #CHECK REFACTOR FOR THIS LOOPS
+        for dir_name in ['/test/','/train/']:
+			new_path = path+dir_name
+			if os.path.isdir(new_path):
+				for tag in os.listdir(new_path):
+					real_state = int(tag)
+					new_path = path+dir_name+tag+'/'
+					print(new_path)
+					for filename in os.listdir(new_path):
+						if filename.endswith(".png"):
+							img = new_path+filename
+							img_batch = h.preProcessImg(img)
+							s_cnn, _ = self.runCNN(model,img_batch)
+							Conf_Mat[int(real_state),int(s_cnn)] += 1
+							if int(real_state) != int(s_cnn):
+								entry = {}
+								entry['Path'] = new_path
+								entry['Step'] = filename
+								data = data.append(entry,ignore_index=True)
+		print(Conf_Mat)
+		print('Number of point in data set: ',Conf_Mat.sum())
+		data.to_csv('./CNNerror_log.csv',index=False)
+
+		score = Conf_Mat.trace()/Conf_Mat.sum()
+
+		return score
