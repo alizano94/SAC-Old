@@ -3,11 +3,10 @@ from src.dynamics import SNN
 
 init_state_img = './data/initialstates/Crsytal_test.png'
 
-cnn = CNN()
-snn = SNN()
 
-cnn.createCNN(summary=False)
-cnn.loadWeights(None)
+snn = SNN(w=100,m=1)
+snn.createRNN(summary=True)
+snn.trainSNN()
 
 
 
