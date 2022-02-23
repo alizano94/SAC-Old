@@ -9,14 +9,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from src.helpers import Helpers
+from src.helpers import CNN_Helpers
 
-class CNN(Helpers):
+class CNN(CNN_Helpers):
     def __init__(self, *args, **kwargs):
         super(CNN, self).__init__(*args, **kwargs)
-        self.ds_path = '/home/lizano/Documents/SAC/data/raw/cnn'
-        self.weights_path = '/home/lizano/Documents/SAC/models/cnn/CNN.h5'
-        self.k = len(os.listdir(os.path.join(self.path,'train')))
+        self.ds_path = './data/raw/cnn'
+        self.weights_path = './models/cnn/CNN.h5'
+        self.k = len(os.listdir(os.path.join(self.ds_path,'train')))
         self.IMG_H=212
         self.IMG_W=212
         self.chan=1
@@ -168,35 +168,45 @@ class CNN_Testing(CNN):
 
     def testCNN(self,path):
         '''
-        Function thats test the CNN against its own DS.
-        Return class mtrix as numpy array
+        Function that test CNN performance by callculating the 
+        confusion matrix using the data in the specified path.
+        args:
+            -path: the path to the data sst to test. Set path = None
+            to test using training/testing data set. 
+        returns;
+            -confution matrix: confusion matirx for the selected data.
+            -missclassified data: csv containing the missclassified images.  
         '''
-        Conf_Mat = np.zeros([3,3])
+        if path == None:
+            path = self.ds_path
+
+        results_path = './results/cnn'
+        Conf_Mat = np.zeros([self.k,self.k])
         data = pd.DataFrame()
         
         #CHECK REFACTOR FOR THIS LOOPS
-        for dir_name in ['/test/','/train/']:
-			new_path = path+dir_name
-			if os.path.isdir(new_path):
-				for tag in os.listdir(new_path):
-					real_state = int(tag)
-					new_path = path+dir_name+tag+'/'
-					print(new_path)
-					for filename in os.listdir(new_path):
-						if filename.endswith(".png"):
-							img = new_path+filename
-							img_batch = h.preProcessImg(img)
-							s_cnn, _ = self.runCNN(model,img_batch)
-							Conf_Mat[int(real_state),int(s_cnn)] += 1
-							if int(real_state) != int(s_cnn):
-								entry = {}
-								entry['Path'] = new_path
-								entry['Step'] = filename
-								data = data.append(entry,ignore_index=True)
-		print(Conf_Mat)
-		print('Number of point in data set: ',Conf_Mat.sum())
-		data.to_csv('./CNNerror_log.csv',index=False)
+        for dir_name in os.listdir(path):
+            new_path = os.path.join(path,dir_name)
+            if os.path.isdir(new_path):
+                for tag in os.listdir(new_path):
+                    real_state = int(tag)
+                    new_path = os.path.join(os.path.join(path,dir_name),tag)
+                    print(new_path)
+                    for filename in os.listdir(new_path):
+                        if filename.endswith(".png"):
+                            img = os.path.join(new_path,filename)
+                            s_cnn, _ = self.runCNN(img)
+                            Conf_Mat[int(real_state),int(s_cnn)] += 1
+                            if int(real_state) != int(s_cnn):
+                                entry = {}
+                                entry['Path'] = os.path.join(new_path,filename)
+                                entry['CNN'] = s_cnn
+                                entry['Real'] = real_state
+                                data = data.append(entry,ignore_index=True)
+        print(Conf_Mat)
+        np.save(os.path.join(results_path,'ConfMat.npy'),Conf_Mat)
+        print('Number of point in data set: ',Conf_Mat.sum())
+        data.to_csv(os.path.join(results_path,'CNNerror_log.csv'),index=False)
 
-		score = Conf_Mat.trace()/Conf_Mat.sum()
-
-		return score
+        score = Conf_Mat.trace()/Conf_Mat.sum()
+        print(score)
