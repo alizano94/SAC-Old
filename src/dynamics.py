@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 import tensorflow as tf
 from tensorflow import keras
@@ -20,21 +21,19 @@ class SNN(SNN_Asistance):
         self.w = w
 
         weight_file = 'SNN-W'+str(self.w)+'-M'+str(self.m)+'.h5'
-        self.snn_weights_path = os.path.join(self.snn_ds_path, weight_file)
+        ds_file = 'Balanced-W'+str(self.w)+'-M'+str(self.m)+'.csv'
+        self.snn_preprocess_data_path = os.path.join(self.snn_preprocess_data_path,ds_file)
+        self.snn_weights_path = os.path.join(self.snn_weights_path, weight_file)
 
     def createSNNDS(self):
         '''
         Function that creates the csv files that 
         serve as DS for the CNN
-        Arguments:
-            -path: path to SNN DS dir
-            -model: CNN model to predict
         '''
 
         data = pd.DataFrame()
 
-        sep = '","'
-        ds_name = 'Balanced-W'+str(self.w)+'-M'+str(self.m)+'.csv'
+
         for v_dir in os.listdir(self.snn_ds_path):
             v_path = os.path.join(self.snn_ds_path,v_dir)
             if os.path.isdir(v_path):
@@ -64,15 +63,12 @@ class SNN(SNN_Asistance):
                                         pass
 
         data.reset_index(inplace=True)						
-        #data = self.helpers.DropBiasData(data)
+        data = self.dropBiasData(data)
         #data.drop(columns=['level_0'],inplace=True)
         print('Saving DS of size: '+str(len(data)))
-        print(ds_name)
-        ds_file = os.path.join(self.preprocess_data_path,'snn')
-        ds_file = os.path.join(ds_file,ds_name)
-        data.to_csv(ds_file,index=False)
+        data.to_csv(self.snn_preprocess_data_path,index=False)
 
-    def createRNN(self,summary=False,keep_v=False):
+    def createSNN(self,summary=False):
         '''
         Function that creates and compile the SNN
         args:
@@ -87,26 +83,15 @@ class SNN(SNN_Asistance):
             name = 'S'+str(i-self.m)
             FEATURE_NAMES += [name]
 
-        if keep_v:
-            for i in range(self.m):
-                name = 'V'+str(i-self.m)
-        else:
-            FEATURE_NAMES += ['V']
+        FEATURE_NAMES += ['V']
 
 
         inputs = {}
         for name in FEATURE_NAMES:
             inputs[name] = tf.keras.Input(shape=(1,), name=name)
-        print(inputs)
-
-        if keep_v:
-            memory = inputs.copy()
-            for i in range(self.m):
-                name = 'V'+str(i-self.m)
-                memory.pop(name)
-        else:
-            memory = inputs.copy()
-            memory.pop('V')
+        
+        memory = inputs.copy()
+        memory.pop('V')
 
         features = keras.layers.concatenate(list(memory.values()))
         features = layers.BatchNormalization()(features)
@@ -156,7 +141,7 @@ class SNN(SNN_Asistance):
         and the PATH of the data set.
         '''
 
-        data = pd.read_csv(self.snn_ds_path)
+        data = pd.read_csv(self.snn_preprocess_data_path)
 
         
         train_features = self.df2dict(data)
@@ -203,3 +188,122 @@ class SNN(SNN_Asistance):
         self.snn_model.load_weights(path)
         print("Loaded model from disk")
 
+    def runSNN(self,voltage_level,states):
+        '''
+		Function that runs SNN.
+		Args:
+			-V: voltage level applied to the transition
+            -states: list containing the previuos necesary states.
+		Returns:
+			-out: label of the state after transition. 
+		'''
+        if len(states) < self.m:
+            while len(states) < self.m:
+                states.insert(0,states[0])
+        elif len(states) > self.m:
+            while len(states) > self.m:
+                states.pop(0)
+        else:
+            pass
+        input_feat = {'V':np.array([float(voltage_level)])}
+        for i in range(self.m):
+            name = 'S'+str(i-self.m)
+            input_feat[name] = np.array([float(states[i])])
+
+        probs = self.snn_model.predict(input_feat)
+        cat_dist = tfp.distributions.Categorical(probs=probs[0])		
+        out = cat_dist.sample(1)[0]
+        return out
+
+class SNN_Testing(SNN):
+    def __init__(self,*args,**kwargs):
+        super(SNN_Testing,self).__init__(*args,**kwargs)
+        self.snn = SNN(w=self.w,m=self.m)
+        self.snn.createSNN()
+        self.snn.loadWeights(None)
+
+    def getTranitionTensorDS(self):
+        '''
+        Calculates and plots transition tensor for the data set.
+        '''
+        tensor_file_name = 'DS_TransitionTensor-W'+str(self.w)+'-M'+str(self.m)+'.npy'
+        tensor_plot_file_name = 'DS_TransitionTensor-W'+str(self.w)+'-M'+str(self.m)+'.png'
+        tensor_save_path = os.path.join(self.snn_results_path,tensor_file_name)
+        DS_df = pd.read_csv(self.snn_preprocess_data_path)
+        trans_matrix = np.zeros((4,self.k,self.k))
+
+        for _, rows in DS_df.iterrows():
+            trans_matrix[int(rows['V'])-1,int(rows['S-1']),int(rows['S0'])] += 1
+
+        np.save(tensor_save_path,trans_matrix)
+
+        x=np.arange(self.k)
+        
+        for i in range(4):
+            for j in range(3):
+                plt.subplot(4,3,3*i+j+1)
+                height=trans_matrix[i,j,:]/sum(trans_matrix[i,j,:])
+                plt.bar(x,height=height,color='red')
+                plt.ylim([0.0,1.0])
+                if 3*i+j+1 > 9:
+                    plt.xlabel('Tansition State')
+                if 3*i+j+1 < 4:
+                    plt.title('Initial State: '+str(x[j]))
+                if j == 0:
+                    plt.ylabel('Applied Voltage: V'+str(i+1))
+
+        plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name))
+
+
+    def testSNN(self,replicate_DS=False):
+        '''
+        Calculates and plots transition tensor from pretrained model.
+        args:
+            -replicate_DS: if True takes inputs form DS and use it to 
+                            calculate the tensor.
+                            if False calculates the tensor using all 
+                            the posible input states.
+        '''
+        
+        tensor_file_name = 'SNN_TransitionTensor-W'+str(self.w)+'-M'+str(self.m)+'.npy'
+        tensor_plot_file_name = 'SNN_TransitionTensor-W'+str(self.w)+'-M'+str(self.m)+'.png'
+        tensor_save_path = os.path.join(self.snn_results_path,tensor_file_name)
+        DS_df = pd.read_csv(self.snn_preprocess_data_path)
+        trans_matrix = np.zeros((4,self.k,self.k))
+
+        if replicate_DS:
+            for _, rows in DS_df.iterrows():
+                V = float(rows['V'])
+                states = []
+                for i in range(self.m):
+                    name = 'S'+str(i-self.m)
+                    states.insert(-1,int(rows[name]))
+                out = self.snn.runSNN(V,states)
+                trans_matrix[int(rows['V'])-1,int(rows['S-1']),int(out)] += 1
+        else:
+            for V in range(4):
+                for initial_state in range(3):
+                    states = [initial_state]
+                    for i in range(10000):		
+                        out = self.snn.runSNN(V+1,states)
+                        trans_matrix[V,initial_state,int(out)] += 1
+
+        np.save(tensor_save_path,trans_matrix)
+
+        x=np.arange(self.k)
+
+        for i in range(4):
+            for j in range(3):
+                plt.subplot(4,3,3*i+j+1)
+                height=trans_matrix[i,j,:]/sum(trans_matrix[i,j,:])
+                plt.bar(x,height=height,color='black')
+                plt.ylim([0.0,1.0])
+                plt.xticks(x,['Fluid','Defective','Crystal'])
+                if 3*i+j+1 > 9:
+                    plt.xlabel('Tansition State')
+                if 3*i+j+1 < 4:
+                    plt.title('Initial State: '+str(x[j]))
+                if j == 0:
+                    plt.ylabel('Applied Voltage: V'+str(i+1))
+
+        plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name))

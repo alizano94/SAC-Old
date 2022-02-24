@@ -1,18 +1,22 @@
 import os
 import pandas as pd
 import numpy as np
+from random import seed, randint
 
 
 from tensorflow.keras.preprocessing import image
 
 class Helpers():
     def __init__(self):
+
+        self.cnn_results_path = '/home/lizano/Documents/SAC/results/cnn'
         self.cnn_ds_path = '/home/lizano/Documents/SAC/data/raw/cnn'
         self.cnn_weights_path = '/home/lizano/Documents/SAC/models/cnn/CNN.h5'
 
+        self.snn_results_path = '/home/lizano/Documents/SAC/results/snn'
         self.snn_ds_path = '/home/lizano/Documents/SAC/data/raw/snn'
         self.snn_weights_path = '/home/lizano/Documents/SAC/models/snn'
-        self.preprocess_data_path = '/home/lizano/Documents/SAC/data/prepocessed'
+        self.snn_preprocess_data_path = '/home/lizano/Documents/SAC/data/preprocessed/snn'
 
     def preProcessImg(self,img_path,IMG_H=212,IMG_W=212):
         '''
@@ -86,3 +90,37 @@ class Helpers():
             onehotencoded_array[i][index] = 1
 
         return onehotencoded_array
+
+    def dropBiasData(self,data):
+        '''
+        Resamples the data to ensure theres no BIAS on 
+        ouput state dsitribution.
+        '''
+        seed(1)
+
+        hist = self.getHist(data)
+
+        min_hist = min(hist)
+
+        while max(hist) != min_hist:
+            index = randint(0,len(data)-1)
+            hist_index = int(data['S0'][index])
+            if hist[hist_index] > min_hist:
+                data.drop(index=index, inplace=True)
+            hist = self.getHist(data)
+            data.reset_index(inplace=True)
+            data.drop(columns=['index'],inplace=True)
+
+        return data
+
+    def getHist(self,data):
+        '''
+        create histogram from labels data
+        '''
+        hist = [0,0,0]
+
+        for _, rows in data.iterrows():
+            hist[int(rows['S0'])] += 1
+        print(hist)
+
+        return hist
