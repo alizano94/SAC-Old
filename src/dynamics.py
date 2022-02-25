@@ -63,7 +63,7 @@ class SNN(SNN_Asistance):
                                         pass
 
         data.reset_index(inplace=True)						
-        data = self.dropBiasData(data)
+        data = self.balanceData(data,method='expand')
         #data.drop(columns=['level_0'],inplace=True)
         print('Saving DS of size: '+str(len(data)))
         data.to_csv(self.snn_preprocess_data_path,index=False)
@@ -72,9 +72,8 @@ class SNN(SNN_Asistance):
         '''
         Function that creates and compile the SNN
         args:
-            -step: time memory size
-        returns:
-            -model: stochastic/recurrent model.
+            -summary: False by default, set to True
+                        to get sumary of the model. 
         ''' 
 
         FEATURE_NAMES = []
@@ -135,7 +134,7 @@ class SNN(SNN_Asistance):
                 show_shapes=True
                 )
         
-    def trainSNN(self,epochs=10,batch=5,plot=False):
+    def trainSNN(self,epochs=100,batch=10,plot=False):
         '''
         A function that trains a SNN given the model
         and the PATH of the data set.
@@ -176,7 +175,7 @@ class SNN(SNN_Asistance):
                         yaxis=dict(title='Loss'))
             fig.show()
 
-    def loadWeights(self,path):
+    def loadSNN(self,path):
         '''
         Functions that loads weight for the model
         args:
@@ -220,7 +219,7 @@ class SNN_Testing(SNN):
         super(SNN_Testing,self).__init__(*args,**kwargs)
         self.snn = SNN(w=self.w,m=self.m)
         self.snn.createSNN()
-        self.snn.loadWeights(None)
+        self.snn.loadSNN(None)
 
     def getTranitionTensorDS(self):
         '''
@@ -241,7 +240,7 @@ class SNN_Testing(SNN):
         
         for i in range(4):
             for j in range(3):
-                plt.subplot(4,3,3*i+j+1)
+                plt.subplot(4,self.k,self.k*i+j+1)
                 height=trans_matrix[i,j,:]/sum(trans_matrix[i,j,:])
                 plt.bar(x,height=height,color='red')
                 plt.ylim([0.0,1.0])
@@ -252,7 +251,10 @@ class SNN_Testing(SNN):
                 if j == 0:
                     plt.ylabel('Applied Voltage: V'+str(i+1))
 
-        plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name))
+        figure = plt.gcf()
+        figure.set_size_inches(32,16)
+        plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name),dpi=100)
+        plt.clf()
 
 
     def testSNN(self,replicate_DS=False):
@@ -284,7 +286,7 @@ class SNN_Testing(SNN):
             for V in range(4):
                 for initial_state in range(3):
                     states = [initial_state]
-                    for i in range(10000):		
+                    for i in range(1000):		
                         out = self.snn.runSNN(V+1,states)
                         trans_matrix[V,initial_state,int(out)] += 1
 
@@ -294,7 +296,7 @@ class SNN_Testing(SNN):
 
         for i in range(4):
             for j in range(3):
-                plt.subplot(4,3,3*i+j+1)
+                plt.subplot(4,self.k,self.k*i+j+1)
                 height=trans_matrix[i,j,:]/sum(trans_matrix[i,j,:])
                 plt.bar(x,height=height,color='black')
                 plt.ylim([0.0,1.0])
@@ -306,4 +308,12 @@ class SNN_Testing(SNN):
                 if j == 0:
                     plt.ylabel('Applied Voltage: V'+str(i+1))
 
-        plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name))
+        figure = plt.gcf()
+        figure.set_size_inches(32,16)
+        plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name),dpi=100)
+        plt.clf()
+
+class Control_Asistance(SNN):
+    def __init__(self,*args, **kwargs):
+        super(Control_Asistance,self).__init__(*args,**kwargs)
+        

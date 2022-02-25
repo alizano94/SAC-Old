@@ -18,6 +18,8 @@ class Helpers():
         self.snn_weights_path = '/home/lizano/Documents/SAC/models/snn'
         self.snn_preprocess_data_path = '/home/lizano/Documents/SAC/data/preprocessed/snn'
 
+        self.contorl_policies = '/home/lizano/Documents/SAC/models/control'
+
     def preProcessImg(self,img_path,IMG_H=212,IMG_W=212):
         '''
         A function that preprocess an image to fit 
@@ -91,7 +93,7 @@ class Helpers():
 
         return onehotencoded_array
 
-    def dropBiasData(self,data):
+    def balanceData(self,data,method='drop'):
         '''
         Resamples the data to ensure theres no BIAS on 
         ouput state dsitribution.
@@ -101,15 +103,29 @@ class Helpers():
         hist = self.getHist(data)
 
         min_hist = min(hist)
+        max_hist = max(hist)
 
-        while max(hist) != min_hist:
-            index = randint(0,len(data)-1)
-            hist_index = int(data['S0'][index])
-            if hist[hist_index] > min_hist:
-                data.drop(index=index, inplace=True)
-            hist = self.getHist(data)
-            data.reset_index(inplace=True)
-            data.drop(columns=['index'],inplace=True)
+        if method == 'drop':
+            while max(hist) != min_hist:
+                index = randint(0,len(data)-1)
+                hist_index = int(data['S0'][index])
+                if hist[hist_index] > min_hist:
+                    data.drop(index=index, inplace=True)
+                hist = self.getHist(data)
+                print(hist)
+                data.reset_index(inplace=True)
+                data.drop(columns=['index'],inplace=True)
+        else:
+            while min(hist) != max_hist:
+                index = randint(0,len(data)-1)
+                hist_index = int(data['S0'][index])
+                if hist[hist_index] < max_hist:
+                    #add random value to data set
+                    data.loc[len(data.index)] = data.iloc[index]
+                hist = self.getHist(data)
+                print(hist)
+                data.reset_index(inplace=True)
+                data.drop(columns=['index'],inplace=True)
 
         return data
 
@@ -121,6 +137,40 @@ class Helpers():
 
         for _, rows in data.iterrows():
             hist[int(rows['S0'])] += 1
-        print(hist)
-
         return hist
+
+    def stateEncoder(self,k,state):
+        '''
+        Method that encondes a given state into 
+        a number
+        '''
+        s = 0
+        m = len(state)
+        for i in range(m):
+            j = m - i -1
+            s += state[j]*k**i
+        return s
+
+    def stateDecoder(self,k,state,m):
+        '''
+        Method that decodes stae from number to 
+        input vector.
+        '''
+        done = False
+        out = []
+        q,r = 0,0
+        q = state
+        while not done:
+            new_q = q // k
+            #print(new_q)
+            r = q % k
+            q = new_q
+            out.append(r)
+            if new_q == 0:
+                done = True
+        while len(out) < m:
+            out.append(0)
+
+        #print(out)
+        out = out[::-1]
+        return out

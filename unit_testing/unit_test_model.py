@@ -4,7 +4,7 @@ from src.dynamics import SNN_Testing
 def test_CNN():
     test = CNN_Testing()
     test.createCNN()
-    test.loadWeights(None)
+    test.loadCNN(None)
     test.testCNN(None)
 
     return None
@@ -12,7 +12,7 @@ def test_CNN():
 def test_SNN():
     test = SNN_Testing(w=100,m=1)
     test.createSNN()
-    test.loadWeights(None)
+    test.loadSNN(None)
     test.getTranitionTensorDS()
     test.testSNN()
 

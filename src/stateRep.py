@@ -63,7 +63,7 @@ class CNN(Helpers):
 				show_shapes=True
 				)
     
-    def trainCNN(self,batch=32,epochs=8,plot=True): 
+    def trainCNN(self,batch=32,epochs=8,plot=False): 
         '''
         A function that trains a CNN given the model
         and the PATH of the data set.
@@ -135,7 +135,7 @@ class CNN(Helpers):
                         yaxis=dict(title='Percentage'))
             fig.show()
 
-    def loadWeights(self,path):
+    def loadCNN(self,path):
         '''
         Functions that loads weight for the model
         args:
@@ -216,7 +216,7 @@ class SNN_Asistance(CNN):
         super(SNN_Asistance, self).__init__(*args, **kwargs)
         self.cnn = CNN()
         self.cnn.createCNN(summary=False)
-        self.cnn.loadWeights(None)
+        self.cnn.loadCNN(None)
 
     def preProcessSNNDS(self):
         '''

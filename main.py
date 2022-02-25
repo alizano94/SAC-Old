@@ -1,16 +1,11 @@
-from src.stateRep import CNN
-from src.dynamics import SNN
+from src.control import RL
 
-init_state_img = './data/initialstates/Crsytal_test.png'
 
-cnn = CNN()
-cnn.createCNN()
-cnn.loadWeights(None)
+control = RL(w=100,m=1,number_actions=4)
+control.createCNN()
+control.createSNNDS()
+control.createSNN()
+control.trainSNN(plot=True)
 
-snn = SNN(w=100,m=1)
-snn.createSNN()
-snn.loadWeights(None)
-
-initial_state, _ = cnn.runCNN(init_state_img)
-print(initial_state)
-print(int(snn.runSNN(4,[initial_state])))
+from unit_testing.unit_test_model import test_SNN
+test_SNN()
