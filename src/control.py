@@ -5,10 +5,9 @@ from IPython.display import clear_output
 from src.dynamics import Control_Asistance
 
 class RL(Control_Asistance):
-    def __init__(self,number_actions,*args,**kwargs):
+    def __init__(self,*args,**kwargs):
         super(RL,self).__init__(*args,**kwargs)
 
-        self.a = number_actions
         self.s_size = self.k**self.m
         self.out_file = str(self.s_size)+'X'+str(self.a)+'Q_table'+str(self.m)+'M.npy'
         self.out_file = os.path.join(self.contorl_policies,self.out_file)

@@ -4,6 +4,18 @@ import pandas as pd
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
+SMALL_SIZE = 24
+MEDIUM_SIZE = 32
+BIGGER_SIZE = 64
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -15,10 +27,11 @@ import tensorflow_probability as tfp
 from src.stateRep import SNN_Asistance
 
 class SNN(SNN_Asistance):
-    def __init__(self,w,m,*args,**kwargs):
+    def __init__(self,a,w,m,*args,**kwargs):
         super(SNN,self).__init__(*args,**kwargs)
         self.m = m
         self.w = w
+        self.a = a
 
         weight_file = 'SNN-W'+str(self.w)+'-M'+str(self.m)+'.h5'
         ds_file = 'Balanced-W'+str(self.w)+'-M'+str(self.m)+'.csv'
@@ -217,7 +230,7 @@ class SNN(SNN_Asistance):
 class SNN_Testing(SNN):
     def __init__(self,*args,**kwargs):
         super(SNN_Testing,self).__init__(*args,**kwargs)
-        self.snn = SNN(w=self.w,m=self.m)
+        self.snn = SNN(a=self.a,w=self.w,m=self.m)
         self.snn.createSNN()
         self.snn.loadSNN(None)
 
@@ -312,6 +325,79 @@ class SNN_Testing(SNN):
         figure.set_size_inches(32,16)
         plt.savefig(os.path.join(self.snn_results_path,tensor_plot_file_name),dpi=100)
         plt.clf()
+
+    def getTrajectoryHistogran(self,initial_image,N,l):
+        '''
+        Plots a time dependent histogram.
+        args:
+            -initial_image: path to initial state image.
+            -N: Nunmber of simulations.
+            -l: lenght of the trajectory for each simulation.
+        '''
+
+        for v in range(self.a):
+            trajectory_hist = []
+            for i in range(l*(self.k+1)):
+                trajectory_hist += [0]
+            x = np.arange(len(trajectory_hist))
+            state, _ = self.runCNN(initial_image)
+            for n in range(N):
+                for i in range(l):
+                    trajectory_hist[4*i+state] += 1
+                    state = self.runSNN(v+1,[state])
+            for i in range(len(trajectory_hist)):
+                trajectory_hist[i] = trajectory_hist[i]/N
+            plt.subplot(2,2,v+1)
+            plt.bar(x,height=trajectory_hist,color='black')
+            xticks = []
+            for i in range(self.k):
+                xticks += [str(i)]
+            xticks += ['']
+            xticks = xticks*l
+            plt.xticks(x,xticks)
+            x_minor = []
+            x_minor_lbs = []
+            for i in range(l):
+                label = str(l+1)+'step'
+                x_minor += [(self.k-1)/2+l*(self.k+1)]
+                x_minor_lbs += [label]
+            #plt.xticks(x_minor,x_minor_lbs,minor=True)
+            plt.ylim([0.0,1.2])
+            plt.yticks([0.0,0.5,1.0],['0.0','0.5','1.0'])
+            plt.ylabel('Frecuecy')
+            plt.title('Voltage level '+str(v+1))
+
+        figure = plt.gcf()
+        figure.set_size_inches(32,18)    
+        plt.savefig(os.path.join(self.snn_results_path,'Trajectories.png'),dpi=100)
+        plt.clf()
+    
+    def getTrajectories(self,initial_image,l):
+        '''
+        Get single trajectory plots for each voletage leve.
+        args:
+            -
+        '''
+        for v in range(self.a):
+            state, _ = self.runCNN(initial_image)
+            trajectory_hist = [state]
+            for i in range(l):
+                state = self.runSNN(v+1,[state])
+                trajectory_hist += [state]
+            x = np.arange(len(trajectory_hist))
+            plt.subplot(2,2,v+1)
+            plt.plot(x,trajectory_hist,color='black', linewidth=3)
+            plt.ylim([-0.5,2.5])
+            ylabels = ['Fluid','Deffective','Crystal']
+            plt.yticks(np.arange(3),ylabels)
+            plt.xlabel('Time step.')
+            plt.title('Voltage level '+str(v+1))
+
+        figure = plt.gcf()
+        figure.set_size_inches(32,18)    
+        plt.savefig(os.path.join(self.snn_results_path,'Trajectory.png'),dpi=100)
+        plt.clf()
+
 
 class Control_Asistance(SNN):
     def __init__(self,*args, **kwargs):

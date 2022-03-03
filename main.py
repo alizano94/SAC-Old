@@ -1,11 +1,11 @@
+import numpy as np
+import matplotlib.pyplot as plt
 from src.control import RL
 
+initial_image = '/home/lizano/Documents/SAC/data/initialstates/Fluid_test.png'
 
-control = RL(w=100,m=1,number_actions=4)
+control = RL(w=100,m=1,a=4)
 control.createCNN()
-control.createSNNDS()
 control.createSNN()
-control.trainSNN(plot=True)
-
-from unit_testing.unit_test_model import test_SNN
-test_SNN()
+control.loadCNN(None)
+control.loadSNN(None)
